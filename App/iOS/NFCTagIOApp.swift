@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct NFCTagIOApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
+
+  var body: some Scene {
+    WindowGroup {
+      NavigationStack {
+        NFCNDEFReaderView()
+      }
     }
+  }
 }
