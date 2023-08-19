@@ -11,7 +11,8 @@ import NFCTagIO
 struct NFCNDEFReaderView: View {
 
   @Bindable private var reader = NFCNDEFReader()
-  @State private var isOneTimeRead = true
+  @State private var isSingleScan = true
+  @State private var scanError: LocalizedErrorModel?
 
   var body: some View {
     List {
@@ -50,17 +51,46 @@ struct NFCNDEFReaderView: View {
         }
       }
     }
-    .navigationTitle("Reader")
+    .overlay {
+      if reader.messages.isEmpty, !reader.hasError {
+        ContentUnavailableView {
+          if reader.isScanning {
+            ProgressView()
+          } else {
+            Label("No Messages", systemImage: "tray.fill")
+          }
+        } description: {
+          if reader.isScanning {
+            Text("Scanning...")
+          } else {
+            Text("Please start by pressing the SCAN button below.")
+          }
+        }
+      }
+    }
+    .navigationTitle("NDEF Reader")
 
-    ScanView(isOneTimeRead: $isOneTimeRead) {
-      reader.beginScanning()
+    ScanView(isSingleScan: $isSingleScan) {
+      do {
+        try reader.beginScanning(
+          alertMessage: "Please bring the device close to the tag",
+          invalidateAfterFirstRead: isSingleScan
+        )
+      } catch {
+        scanError = .init(error: error)
+      }
+    }
+    .alert(isPresented: .constant(scanError != nil), error: scanError) {
+      Button("OK") {
+        scanError = nil
+      }
     }
   }
 }
 
 private struct ScanView: View {
 
-  @Binding var isOneTimeRead: Bool
+  @Binding var isSingleScan: Bool
   let scanAction: () -> Void
 
   var body: some View {
@@ -68,19 +98,19 @@ private struct ScanView: View {
       HStack {
         VStack(spacing: 2) {
           Toggle(
-            "OneTimeRead",
-            systemImage: isOneTimeRead ? "repeat.1" : "repeat",
-            isOn: $isOneTimeRead
+            "abc",
+            systemImage: isSingleScan ? "repeat.1" : "repeat",
+            isOn: $isSingleScan
           )
-
           .font(.title2)
           .labelStyle(.iconOnly)
           .toggleStyle(.button)
 
-          Text("OneTimeRead")
+          Text(isSingleScan ? "Single Scan" : "Multi Scan")
             .font(.caption2)
+            .foregroundStyle(.link)
         }
-        .foregroundStyle(isOneTimeRead ? .blue : .gray)
+        .frame(minWidth: 80)
 
         Divider()
 

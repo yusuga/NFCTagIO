@@ -11,6 +11,7 @@ import Observation
 @Observable
 open class NFCNDEFReader: NSObject {
 
+  public private(set) var isScanning = false
   public private(set) var messages = [NFCNDEFMessage]()
   public private(set) var error: NFCReaderError?
   public private(set) var unknownError: Error?
@@ -21,23 +22,41 @@ open class NFCNDEFReader: NSObject {
 public extension NFCNDEFReader {
 
   func beginScanning(
+    alertMessage: String? = nil,
     queue: dispatch_queue_t? = nil,
     invalidateAfterFirstRead: Bool = true
-  ) {
+  ) throws {
     clearErrors()
+
+    guard NFCNDEFReaderSession.readingAvailable else {
+      throw NFCTagIOError.nfcTagReadingNotSupported
+    }
 
     let session = NFCNDEFReaderSession(
       delegate: self,
       queue: queue,
       invalidateAfterFirstRead: invalidateAfterFirstRead
     )
+    if let alertMessage {
+      session.alertMessage = alertMessage
+    }
+
+    guard !session.isReady else {
+      throw NFCTagIOError.nfcReaderSessionAlreadyStarted
+    }
+
     session.begin()
 
     self.session = session
+    self.isScanning = true
   }
 
   func clearMessages() {
     messages.removeAll()
+  }
+
+  var hasError: Bool {
+    error != nil || unknownError != nil
   }
 
   func clearErrors() {
@@ -60,6 +79,8 @@ extension NFCNDEFReader: NFCNDEFReaderSessionDelegate {
 
   public func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
     logger.trace("\(#function), \(error)")
+
+    isScanning = false
 
     switch error {
     case let error as NFCReaderError:
