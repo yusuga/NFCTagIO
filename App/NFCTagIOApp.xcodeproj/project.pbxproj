@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B8040B112A9263F400506A5C /* NFCReaderEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8040B102A9263F400506A5C /* NFCReaderEmptyView.swift */; };
 		B815AE252A920E0E008A9338 /* NFCTagReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B815AE242A920E0E008A9338 /* NFCTagReaderView.swift */; };
 		B82682302A8F5AB900A3BF4F /* NFCTagIOApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826822F2A8F5AB900A3BF4F /* NFCTagIOApp.swift */; };
 		B82682322A8F5AB900A3BF4F /* NFCNDEFReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82682312A8F5AB900A3BF4F /* NFCNDEFReaderView.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B8040B102A9263F400506A5C /* NFCReaderEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReaderEmptyView.swift; sourceTree = "<group>"; };
 		B815AE242A920E0E008A9338 /* NFCTagReaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFCTagReaderView.swift; sourceTree = "<group>"; };
 		B826822C2A8F5AB900A3BF4F /* NFCTagIOApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NFCTagIOApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B826822F2A8F5AB900A3BF4F /* NFCTagIOApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCTagIOApp.swift; sourceTree = "<group>"; };
@@ -48,11 +50,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B8040B0F2A92627D00506A5C /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				B8040B102A9263F400506A5C /* NFCReaderEmptyView.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
 		B815AE262A920E15008A9338 /* View */ = {
 			isa = PBXGroup;
 			children = (
 				B815AE282A92111C008A9338 /*  NFCNDEF */,
 				B815AE292A921125008A9338 /*  NFCTag */,
+				B8040B0F2A92627D00506A5C /* Common */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -240,6 +251,7 @@
 				B862E2752A91F6050018812B /* NFCNDEFMessage+App.swift in Sources */,
 				B815AE252A920E0E008A9338 /* NFCTagReaderView.swift in Sources */,
 				B829855D2A90907B005A27DB /* LocalizedErrorModel.swift in Sources */,
+				B8040B112A9263F400506A5C /* NFCReaderEmptyView.swift in Sources */,
 				B829855F2A90B101005A27DB /* NFCNDEFMessageView.swift in Sources */,
 				B862E2732A91F5DD0018812B /* ByteCountFormatter+App.swift in Sources */,
 				B82682302A8F5AB900A3BF4F /* NFCTagIOApp.swift in Sources */,

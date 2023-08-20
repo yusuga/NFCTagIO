@@ -20,7 +20,7 @@ extension NFCTagIOError: LocalizedError {
   public var errorDescription: String? {
     switch self {
     case .nfcTagReadingNotSupported:
-      "This device doesn't support reading NFC tags."
+      "This device does not support reading NFC tags."
     case .nfcReaderSessionAlreadyStarted:
       "NFC scanning has already started."
     case .nfcTagsEmpty:
