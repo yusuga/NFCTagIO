@@ -11,6 +11,8 @@ public enum NFCTagIOError {
 
   case nfcTagReadingNotSupported
   case nfcReaderSessionAlreadyStarted
+  case nfcTagsEmpty
+  case unknownNFCNDEFStatus(rawValue: UInt)
 }
 
 extension NFCTagIOError: LocalizedError {
@@ -21,6 +23,10 @@ extension NFCTagIOError: LocalizedError {
       "This device doesn't support reading NFC tags."
     case .nfcReaderSessionAlreadyStarted:
       "NFC scanning has already started."
+    case .nfcTagsEmpty:
+      "No NFC tags were detected."
+    case let .unknownNFCNDEFStatus(rawValue):
+      "An unknown NFC NDEF status occurred with raw value: \(rawValue)."
     }
   }
 }

@@ -33,7 +33,23 @@ extension NFCTypeNameFormat: CustomStringConvertible {
     case .unchanged:
       "unchanged"
     @unknown default:
-      "unknown default"
+      "undefined"
+    }
+  }
+}
+
+extension NFCNDEFStatus: CustomStringConvertible {
+
+  public var description: String {
+    switch self {
+    case .notSupported:
+      "notSupported"
+    case .readWrite:
+      "readWrite"
+    case .readOnly:
+      "readOnly"
+    @unknown default:
+      "undefined"
     }
   }
 }

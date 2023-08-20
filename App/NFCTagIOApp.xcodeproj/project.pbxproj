@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B815AE252A920E0E008A9338 /* NFCTagReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B815AE242A920E0E008A9338 /* NFCTagReaderView.swift */; };
 		B82682302A8F5AB900A3BF4F /* NFCTagIOApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826822F2A8F5AB900A3BF4F /* NFCTagIOApp.swift */; };
 		B82682322A8F5AB900A3BF4F /* NFCNDEFReaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82682312A8F5AB900A3BF4F /* NFCNDEFReaderView.swift */; };
 		B82682342A8F5ABC00A3BF4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B82682332A8F5ABC00A3BF4F /* Assets.xcassets */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B815AE242A920E0E008A9338 /* NFCTagReaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NFCTagReaderView.swift; sourceTree = "<group>"; };
 		B826822C2A8F5AB900A3BF4F /* NFCTagIOApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NFCTagIOApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B826822F2A8F5AB900A3BF4F /* NFCTagIOApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCTagIOApp.swift; sourceTree = "<group>"; };
 		B82682312A8F5AB900A3BF4F /* NFCNDEFReaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCNDEFReaderView.swift; sourceTree = "<group>"; };
@@ -46,6 +48,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B815AE262A920E15008A9338 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B815AE282A92111C008A9338 /*  NFCNDEF */,
+				B815AE292A921125008A9338 /*  NFCTag */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		B815AE272A920E2E008A9338 /* Entry */ = {
+			isa = PBXGroup;
+			children = (
+				B826822F2A8F5AB900A3BF4F /* NFCTagIOApp.swift */,
+			);
+			path = Entry;
+			sourceTree = "<group>";
+		};
+		B815AE282A92111C008A9338 /*  NFCNDEF */ = {
+			isa = PBXGroup;
+			children = (
+				B82682312A8F5AB900A3BF4F /* NFCNDEFReaderView.swift */,
+				B829855E2A90B101005A27DB /* NFCNDEFMessageView.swift */,
+			);
+			path = " NFCNDEF";
+			sourceTree = "<group>";
+		};
+		B815AE292A921125008A9338 /*  NFCTag */ = {
+			isa = PBXGroup;
+			children = (
+				B815AE242A920E0E008A9338 /* NFCTagReaderView.swift */,
+			);
+			path = " NFCTag";
+			sourceTree = "<group>";
+		};
 		B82682232A8F5AB900A3BF4F = {
 			isa = PBXGroup;
 			children = (
@@ -68,9 +104,8 @@
 		B826822E2A8F5AB900A3BF4F /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				B826822F2A8F5AB900A3BF4F /* NFCTagIOApp.swift */,
-				B82682312A8F5AB900A3BF4F /* NFCNDEFReaderView.swift */,
-				B829855E2A90B101005A27DB /* NFCNDEFMessageView.swift */,
+				B815AE272A920E2E008A9338 /* Entry */,
+				B815AE262A920E15008A9338 /* View */,
 				B862E2692A91BDD30018812B /* Extension */,
 				B82985512A907546005A27DB /* Util */,
 				B82682332A8F5ABC00A3BF4F /* Assets.xcassets */,
@@ -203,6 +238,7 @@
 			files = (
 				B82682322A8F5AB900A3BF4F /* NFCNDEFReaderView.swift in Sources */,
 				B862E2752A91F6050018812B /* NFCNDEFMessage+App.swift in Sources */,
+				B815AE252A920E0E008A9338 /* NFCTagReaderView.swift in Sources */,
 				B829855D2A90907B005A27DB /* LocalizedErrorModel.swift in Sources */,
 				B829855F2A90B101005A27DB /* NFCNDEFMessageView.swift in Sources */,
 				B862E2732A91F5DD0018812B /* ByteCountFormatter+App.swift in Sources */,
