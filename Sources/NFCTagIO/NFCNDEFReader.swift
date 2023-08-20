@@ -51,6 +51,11 @@ public extension NFCNDEFReader {
     self.isScanning = true
   }
 
+  func clear() {
+    clearMessages()
+    clearErrors()
+  }
+
   func clearMessages() {
     messages.removeAll()
   }

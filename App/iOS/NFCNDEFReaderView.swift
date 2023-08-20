@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreNFC
 import NFCTagIO
 
 struct NFCNDEFReaderView: View {
@@ -17,58 +18,49 @@ struct NFCNDEFReaderView: View {
   var body: some View {
     List {
       Section {
-        ForEach(reader.messages, id: \.self) {
-          Text($0.description)
+        ForEach(reader.messages, id: \.self) { message in
+          NavigationLink {
+            NFCNDEFMessageView(message: message)
+          } label: {
+            LabeledContent("Message", value: message.formattedLength)
+          }
         }
       } header: {
         if reader.messages.isEmpty {
           EmptyView()
         } else {
-          RightButtonHeader(title: "NFCNDEFMessage", buttonTitle: "Clear") {
-            reader.clearMessages()
-          }
+          Text("NFCNDEFMessage")
         }
       }
 
       if let error = reader.error {
-        Section {
+        Section("NFCReaderError") {
           LabeledContent("localizedDescription", value: error.localizedDescription)
           LabeledContent("errorCode", value: error.errorCode.description)
-        } header: {
-          RightButtonHeader(title: "NFCReaderError", buttonTitle: "Clear") {
-            reader.clearErrors()
-          }
         }
       }
 
       if let error = reader.unknownError {
-        Section {
+        Section("UnknownError") {
           LabeledContent("localizedDescription", value: error.localizedDescription)
-        } header: {
-          RightButtonHeader(title: "UnknownError", buttonTitle: "Clear") {
-            reader.clearErrors()
-          }
         }
       }
     }
+    .animation(.default, value: UUID())
     .overlay {
-      if reader.messages.isEmpty, !reader.hasError {
-        ContentUnavailableView {
-          if reader.isScanning {
-            ProgressView()
-          } else {
-            Label("No Messages", systemImage: "tray.fill")
-          }
-        } description: {
-          if reader.isScanning {
-            Text("Scanning...")
-          } else {
-            Text("Please start by pressing the SCAN button below.")
-          }
-        }
+      if !reader.hasContents {
+        ContentEmptyView(isScanning: reader.isScanning)
       }
     }
     .navigationTitle("NDEF Reader")
+    .toolbar {
+      if reader.hasContents {
+        ToolbarItem(placement: .destructiveAction) {
+          Button("Clear") { reader.clear() }
+            .tint(.red)
+        }
+      }
+    }
 
     ScanView(isSingleScan: $isSingleScan) {
       do {
@@ -98,7 +90,7 @@ private struct ScanView: View {
       HStack {
         VStack(spacing: 2) {
           Toggle(
-            "abc",
+            "",
             systemImage: isSingleScan ? "repeat.1" : "repeat",
             isOn: $isSingleScan
           )
@@ -128,6 +120,34 @@ private struct ScanView: View {
     }
     .frame(maxWidth: .infinity, maxHeight: 60)
     .padding()
+  }
+}
+
+private struct ContentEmptyView: View {
+
+  let isScanning: Bool
+
+  var body: some View {
+    ContentUnavailableView {
+      if isScanning {
+        ProgressView()
+      } else {
+        Label("No Messages", systemImage: "tray.fill")
+      }
+    } description: {
+      if isScanning {
+        Text("Scanning...")
+      } else {
+        Text("Please start by pressing the SCAN button below.")
+      }
+    }
+  }
+}
+
+private extension NFCNDEFReader {
+
+  var hasContents: Bool {
+    !messages.isEmpty || hasError
   }
 }
 
