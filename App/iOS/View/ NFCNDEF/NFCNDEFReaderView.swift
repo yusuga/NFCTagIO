@@ -36,28 +36,26 @@ struct NFCNDEFReaderView: View {
       if let error = reader.error {
         Section("NFCReaderError") {
           LabeledContent("localizedDescription", value: error.localizedDescription)
-          LabeledContent("errorCode", value: error.errorCode.description)
-        }
-      }
-
-      if let error = reader.unknownError {
-        Section("UnknownError") {
-          LabeledContent("localizedDescription", value: error.localizedDescription)
+          if let error = error as? NFCReaderError {
+            LabeledContent("errorCode", value:  error.errorCode.description)
+          }
         }
       }
     }
     .animation(.default, value: UUID())
     .overlay {
       if !reader.hasContents {
-        ContentEmptyView(isScanning: reader.isScanning)
+        NFCReaderEmptyView(isScanning: reader.isScanning)
       }
     }
-    .navigationTitle("NDEF Reader")
+    .navigationTitle("NFCNDEFReader")
     .toolbar {
       if reader.hasContents {
         ToolbarItem(placement: .destructiveAction) {
-          Button("Clear") { reader.clear() }
-            .tint(.red)
+          Button("Clear") {
+            reader.clear()
+          }
+          .tint(.red)
         }
       }
     }
@@ -65,7 +63,7 @@ struct NFCNDEFReaderView: View {
     ScanView(isSingleScan: $isSingleScan) {
       do {
         try reader.beginScanning(
-          alertMessage: "Please bring the device close to the tag",
+          alertMessage: .default,
           invalidateAfterFirstRead: isSingleScan
         )
       } catch {
@@ -123,31 +121,10 @@ private struct ScanView: View {
   }
 }
 
-private struct ContentEmptyView: View {
-
-  let isScanning: Bool
-
-  var body: some View {
-    ContentUnavailableView {
-      if isScanning {
-        ProgressView()
-      } else {
-        Label("No Messages", systemImage: "tray.fill")
-      }
-    } description: {
-      if isScanning {
-        Text("Scanning...")
-      } else {
-        Text("Please start by pressing the SCAN button below.")
-      }
-    }
-  }
-}
-
 private extension NFCNDEFReader {
 
   var hasContents: Bool {
-    !messages.isEmpty || hasError
+    !messages.isEmpty || error != nil
   }
 }
 

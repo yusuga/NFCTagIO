@@ -31,10 +31,10 @@ struct NFCTagReaderView: View {
     .animation(.default, value: UUID())
     .overlay {
       if reader.error == nil {
-        ContentEmptyView(isScanning: reader.isScanning)
+        NFCReaderEmptyView(isScanning: reader.isScanning)
       }
     }
-    .navigationTitle("NFCTag Reader")
+    .navigationTitle("NFCTagReader")
     .toolbar {
       if reader.error != nil {
         ToolbarItem(placement: .destructiveAction) {
@@ -82,28 +82,6 @@ private struct ScanView: View {
     .buttonStyle(.borderedProminent)
     .buttonBorderShape(.capsule)
     .padding()
-  }
-}
-
-private struct ContentEmptyView: View {
-
-  let isScanning: Bool
-
-  var body: some View {
-    ContentUnavailableView {
-      if isScanning {
-        ProgressView()
-      } else {
-        Label("Let's Scan!", systemImage: "wave.3.forward.circle")
-      }
-    } description: {
-      if isScanning {
-        Text("Scanning...")
-      } else {
-        Text("Please start by pressing the SCAN button below.")
-      }
-    }
-    .background(Color(.systemGroupedBackground))
   }
 }
 

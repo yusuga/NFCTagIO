@@ -86,6 +86,7 @@ struct NFCNDEFMessageView: View {
           .navigationTitle(content.title)
           .navigationBarTitleDisplayMode(.inline)
       }
+      .presentationDetents([.medium, .large])
     }
     .navigationTitle("NFCNDEFMessage")
   }
@@ -121,7 +122,7 @@ private struct RecordContentView: View {
   var body: some View {
     VStack(alignment: .leading) {
       Text(title)
-        .fontWeight(.medium)
+        .font(.headline)
 
       GroupBox {
         ForEach(contents) { content in
