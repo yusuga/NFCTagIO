@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct LocalizedErrorModel {
+public struct LocalizedErrorModel {
 
-  let underlyingError: LocalizedError
+  public let underlyingError: LocalizedError
 
-  init(error: Error) {
+  public init(error: Error) {
     underlyingError = (error as? LocalizedError)
     ?? InternalLocalizedErrorModel(underlyingError: error)
   }
@@ -19,19 +19,19 @@ struct LocalizedErrorModel {
 
 extension LocalizedErrorModel: LocalizedError {
 
-  var errorDescription: String? {
+  public var errorDescription: String? {
     underlyingError.errorDescription
   }
 
-  var failureReason: String? {
+  public var failureReason: String? {
     underlyingError.failureReason
   }
 
-  var recoverySuggestion: String? {
+  public var recoverySuggestion: String? {
     underlyingError.recoverySuggestion
   }
 
-  var helpAnchor: String? {
+  public var helpAnchor: String? {
     underlyingError.helpAnchor
   }
 }

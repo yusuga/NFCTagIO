@@ -15,14 +15,14 @@ open class NFCNDEFReader: NSObject {
   public var messages = [NFCNDEFMessage]()
   public var error: Error?
 
-  @ObservationIgnored private var alertMessage: SessionAlertMessage?
+  @ObservationIgnored private var alertMessage: NFCNDEFReaderSessionAlertMessage?
   @ObservationIgnored private var session: NFCNDEFReaderSession?
 }
 
 public extension NFCNDEFReader {
 
   func beginScanning(
-    alertMessage: SessionAlertMessage? = nil,
+    alertMessage: NFCNDEFReaderSessionAlertMessage? = nil,
     queue: dispatch_queue_t? = nil,
     invalidateAfterFirstRead: Bool = true
   ) throws {
