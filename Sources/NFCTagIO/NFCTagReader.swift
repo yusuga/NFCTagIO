@@ -15,16 +15,50 @@ open class NFCTagReader: NSObject {
   public var scannedMessage: NFCNDEFMessage?
   public var error: Error?
 
-  @ObservationIgnored private var alertMessage: NFCNDEFReaderSessionAlertMessage?
-  @ObservationIgnored private var connectionTask: Task<Void, Never>?
-  @ObservationIgnored private var session: NFCNDEFReaderSession?
+  @ObservationIgnored private var internalState: InternalState?
 }
 
 public extension NFCTagReader {
-
+  
+  class InternalState {
+    let session: NFCNDEFReaderSession
+    let scanningMode: ScanningMode
+    let alertMessage: NFCNDEFReaderSessionAlertMessage?
+    let onConnectionError: ((Error) async -> ConnectionErrorResponsePolicy)
+    var connectionTask: Task<Void, Never>?
+    
+    init(
+      session: NFCNDEFReaderSession,
+      scanningMode: ScanningMode,
+      alertMessage: NFCNDEFReaderSessionAlertMessage?,
+      onConnectionError: @escaping (Error) -> ConnectionErrorResponsePolicy
+    ) {
+      self.session = session
+      self.scanningMode = scanningMode
+      self.alertMessage = alertMessage
+      self.onConnectionError = onConnectionError
+    }
+    
+    deinit {
+      connectionTask?.cancel()
+    }
+  }
+  
+  enum ScanningMode {
+    case read
+    case write(message: () async throws -> NFCNDEFMessage)
+  }
+  
+  enum ConnectionErrorResponsePolicy {
+    case restartPolling
+    case invalidate(errorMessage: String?)
+  }
+  
   func beginScanning(
+    mode scanningMode: ScanningMode,
     alertMessage: NFCNDEFReaderSessionAlertMessage? = nil,
-    queue: dispatch_queue_t? = nil
+    queue: dispatch_queue_t? = nil,
+    onConnectionError: @escaping ((Error) -> ConnectionErrorResponsePolicy) = { _ in .restartPolling }
   ) throws {
     error = nil
 
@@ -47,9 +81,14 @@ public extension NFCTagReader {
 
     session.begin()
 
-    self.session = session
-    self.alertMessage = alertMessage
-    self.isScanning = true
+    isScanning = true
+    
+    internalState = .init(
+      session: session,
+      scanningMode: scanningMode,
+      alertMessage: alertMessage,
+      onConnectionError: onConnectionError
+    )
   }
 }
 
@@ -66,7 +105,7 @@ extension NFCTagReader: NFCNDEFReaderSessionDelegate {
   public func readerSession(_ session: NFCNDEFReaderSession, didDetect tags: [NFCNDEFTag]) {
     logger.trace("\(#function), \(tags.description)")
 
-    connectionTask = Task {
+    internalState?.connectionTask = Task {
       do {
         guard let tag = tags.first else {
           throw NFCTagIOError.nfcTagsEmpty
@@ -81,22 +120,44 @@ extension NFCTagReader: NFCNDEFReaderSessionDelegate {
         case .notSupported:
           session.invalidate(errorMessage: "Tag is not supported.")
         case .readWrite, .readOnly:
-          let message = try await tag.readNDEF()
+          switch internalState?.scanningMode {
+          case .read:
+            let message = try await tag.readNDEF()
 
-          logger.debug("message: \(message)")
-          scannedMessage = message
+            logger.debug("message: \(message)")
+            scannedMessage = message
 
-          if let success = alertMessage?.success {
-            session.alertMessage = success
+            if let success = internalState?.alertMessage?.success {
+              session.alertMessage = success
+            }
+
+            session.invalidate()
+          case let .write(message):
+            let message = try await message()
+            logger.debug("message: \(message)")
+            
+            try await tag.writeNDEF(message)
+            
+            if let success = internalState?.alertMessage?.success {
+              session.alertMessage = success
+            }
+
+            session.invalidate()
+          case .none:
+            session.invalidate(errorMessage: "Unexpected flow. scanningMode is nil.")
           }
-
-          session.invalidate()
         @unknown default:
           throw NFCTagIOError.unknownNFCNDEFStatus(rawValue: status.rawValue)
         }
       } catch {
         logger.error("\(#function), error: \(error)")
-        session.restartPolling()
+        
+        switch await internalState?.onConnectionError(error) {
+        case .restartPolling, .none:
+          session.restartPolling()
+        case let .invalidate(errorMessage):
+          session.invalidate(errorMessage: errorMessage ?? "")
+        }
       }
     }
   }
@@ -104,11 +165,11 @@ extension NFCTagReader: NFCNDEFReaderSessionDelegate {
   public func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
     logger.trace("\(#function), \(error)")
 
-    if let failure = alertMessage?.failure {
+    if let failure = internalState?.alertMessage?.failure {
       session.alertMessage = failure
     }
 
-    connectionTask?.cancel()
+    internalState = nil
     isScanning = false
     self.error = error
   }
