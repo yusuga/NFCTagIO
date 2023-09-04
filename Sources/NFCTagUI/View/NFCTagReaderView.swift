@@ -7,17 +7,16 @@
 
 import SwiftUI
 import CoreNFC
-
-import CoreNFC
 import NFCTagIO
 
-struct NFCTagReaderView: View {
+public struct NFCTagReaderView: View {
 
   @Bindable private var reader = NFCTagReader()
-  @State private var isSingleScan = true
   @State private var scanError: LocalizedErrorModel?
+  
+  public init() { }
 
-  var body: some View {
+  public var body: some View {
     List {
       if let error = reader.error {
         Section("NFCReaderError") {

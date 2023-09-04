@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NFCTagUI
 
 @main
 struct NFCTagIOApp: App {
@@ -21,7 +22,7 @@ struct NFCTagIOApp: App {
         }
 
         NavigationStack {
-          NFCNDEFReaderView()
+          NFCNDEFReaderView(isSingleScan: true)
         }
         .tabItem {
           Label("NDEF", systemImage: "tag")

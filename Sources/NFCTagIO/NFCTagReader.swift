@@ -15,7 +15,7 @@ open class NFCTagReader: NSObject {
   public var scannedMessage: NFCNDEFMessage?
   public var error: Error?
 
-  @ObservationIgnored private var alertMessage: SessionAlertMessage?
+  @ObservationIgnored private var alertMessage: NFCNDEFReaderSessionAlertMessage?
   @ObservationIgnored private var connectionTask: Task<Void, Never>?
   @ObservationIgnored private var session: NFCNDEFReaderSession?
 }
@@ -23,7 +23,7 @@ open class NFCTagReader: NSObject {
 public extension NFCTagReader {
 
   func beginScanning(
-    alertMessage: SessionAlertMessage? = nil,
+    alertMessage: NFCNDEFReaderSessionAlertMessage? = nil,
     queue: dispatch_queue_t? = nil
   ) throws {
     error = nil

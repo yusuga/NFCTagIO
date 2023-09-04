@@ -8,12 +8,18 @@
 import SwiftUI
 import CoreNFC
 
-struct NFCNDEFMessageView: View {
+public struct NFCNDEFMessageView: View {
 
-  let message: NFCNDEFMessage
+  private let message: NFCNDEFMessage
   @State private var selectedContent: RecordContent?
+  
+  public init(
+    message: NFCNDEFMessage
+  ) {
+    self.message = message
+  }
 
-  var body: some View {
+  public var body: some View {
     List {
       Section("NFCNDEFMessage") {
         LabeledContent("length", value: message.formattedLength)

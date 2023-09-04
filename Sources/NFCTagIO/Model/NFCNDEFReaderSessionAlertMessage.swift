@@ -1,5 +1,5 @@
 //
-//  SessionAlertMessage.swift
+//  NFCNDEFReaderSessionAlertMessage.swift
 //
 //
 //  Created by yusuga on 2023/08/20.
@@ -7,14 +7,14 @@
 
 import Foundation
 
-public struct SessionAlertMessage {
+public struct NFCNDEFReaderSessionAlertMessage {
 
   let scanning: String?
   let success: String?
   let failure: String?
 }
 
-public extension SessionAlertMessage {
+public extension NFCNDEFReaderSessionAlertMessage {
 
   static var `default`: Self {
     .init(

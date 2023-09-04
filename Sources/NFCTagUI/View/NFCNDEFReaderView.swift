@@ -9,13 +9,19 @@ import SwiftUI
 import CoreNFC
 import NFCTagIO
 
-struct NFCNDEFReaderView: View {
+public struct NFCNDEFReaderView: View {
 
   @Bindable private var reader = NFCNDEFReader()
   @State private var isSingleScan = true
   @State private var scanError: LocalizedErrorModel?
+  
+  public init(
+    isSingleScan: Bool
+  ) {
+    self.isSingleScan = isSingleScan
+  }
 
-  var body: some View {
+  public var body: some View {
     List {
       Section {
         ForEach(reader.messages, id: \.self) { message in
@@ -130,6 +136,6 @@ private extension NFCNDEFReader {
 
 #Preview {
   NavigationStack {
-    NFCNDEFReaderView()
+    NFCNDEFReaderView(isSingleScan: true)
   }
 }

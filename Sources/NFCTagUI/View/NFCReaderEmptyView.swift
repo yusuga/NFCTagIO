@@ -7,11 +7,15 @@
 
 import SwiftUI
 
-struct NFCReaderEmptyView: View {
+public struct NFCReaderEmptyView: View {
 
-  let isScanning: Bool
+  public let isScanning: Bool
+  
+  public init(isScanning: Bool) {
+    self.isScanning = isScanning
+  }
 
-  var body: some View {
+  public var body: some View {
     ContentUnavailableView {
       if isScanning {
         ProgressView()

@@ -1,5 +1,5 @@
 //
-//  NFCNDEFMessage+App.swift
+//  NFCNDEFMessage+NFCTagUI.swift
 //  NFCTagIOApp
 //
 //  Created by yusuga on 2023/08/20.

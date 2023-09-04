@@ -1,18 +1,11 @@
 //
-//  CoreNFC+Library.swift
+//  NFCTypeNameFormat+NFCTagIO.swift
 //
 //
 //  Created by yusuga on 2023/08/20.
 //
 
 import CoreNFC
-
-public extension NFCNDEFPayload {
-
-  func wellKnownNDEFRecordType() throws -> WellKnownNDEFRecordType {
-    try .init(data: type)
-  }
-}
 
 extension NFCTypeNameFormat: CustomStringConvertible {
 
@@ -32,22 +25,6 @@ extension NFCTypeNameFormat: CustomStringConvertible {
       "unknown"
     case .unchanged:
       "unchanged"
-    @unknown default:
-      "undefined"
-    }
-  }
-}
-
-extension NFCNDEFStatus: CustomStringConvertible {
-
-  public var description: String {
-    switch self {
-    case .notSupported:
-      "notSupported"
-    case .readWrite:
-      "readWrite"
-    case .readOnly:
-      "readOnly"
     @unknown default:
       "undefined"
     }
