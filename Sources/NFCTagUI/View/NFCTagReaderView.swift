@@ -51,8 +51,18 @@ public struct NFCTagReaderView: View {
     ScanView() {
       do {
         try reader.beginScanning(
-          alertMessage: .default
-        )
+          mode: .read,
+          alertMessage: .default) {
+            guard let error = ($0 as? NFCReaderError) else {
+              return .restartPolling
+            }
+            switch error.code {
+            case .ndefReaderSessionErrorZeroLengthMessage:
+              return .invalidate(errorMessage: error.localizedDescription)
+            default:
+              return .restartPolling
+            }
+          }
       } catch {
         scanError = .init(error: error)
       }
