@@ -11,8 +11,8 @@ import CoreNFC
 public struct NFCNDEFMessageView: View {
 
   private let message: NFCNDEFMessage
-  @State private var selectedContent: RecordContent?
-  
+  @State private var selectedContent: NFCNDEFMessageRecordContent?
+
   public init(
     message: NFCNDEFMessage
   ) {
@@ -27,7 +27,7 @@ public struct NFCNDEFMessageView: View {
 
       ForEach(Array(message.records.enumerated()), id: \.element) { index, record in
         Section("NFCNDEFPayload: \(index + 1)") {
-          RecordContentView(
+          NFCNDEFMessageRecordContentView(
             title: "typeNameFormat",
             contents: [
               .init(title: "rawValue", value: record.typeNameFormat.rawValue.description),
@@ -36,9 +36,9 @@ public struct NFCNDEFMessageView: View {
             selectedContent: $selectedContent
           )
 
-          RecordContentView(
+          NFCNDEFMessageRecordContentView(
             title: "type",
-            contents: RecordContent.dataContents(from: record.type)
+            contents: NFCNDEFMessageRecordContent.dataContents(from: record.type)
             + [
               (try? record.wellKnownNDEFRecordType())
                 .flatMap { .init(title: "description", value: $0.description, isSelectable: true) }
@@ -47,20 +47,20 @@ public struct NFCNDEFMessageView: View {
             selectedContent: $selectedContent
           )
 
-          RecordContentView(
+          NFCNDEFMessageRecordContentView(
             title: "identifier",
-            contents: RecordContent.dataContents(from: record.identifier),
+            contents: NFCNDEFMessageRecordContent.dataContents(from: record.identifier),
             selectedContent: $selectedContent
           )
 
-          RecordContentView(
+          NFCNDEFMessageRecordContentView(
             title: "payload",
-            contents: RecordContent.dataContents(from: record.payload),
+            contents: NFCNDEFMessageRecordContent.dataContents(from: record.payload),
             selectedContent: $selectedContent
           )
 
           if let uri = record.wellKnownTypeURIPayload()?.absoluteString {
-            RecordContentView(
+            NFCNDEFMessageRecordContentView(
               title: "wellKnownTypeURIPayload",
               contents: [
                 .init(title: "URI", value: uri, isSelectable: true)
@@ -71,13 +71,13 @@ public struct NFCNDEFMessageView: View {
 
           let textPayload = record.wellKnownTypeTextPayload()
           if textPayload.0 != nil || textPayload.1 != nil {
-            RecordContentView(
+            NFCNDEFMessageRecordContentView(
               title: "wellKnownTypeTextPayload",
               contents: [
                 textPayload.0
-                  .flatMap { RecordContent(title: "text", value: $0, isSelectable: true) },
+                  .flatMap { NFCNDEFMessageRecordContent(title: "text", value: $0, isSelectable: true) },
                 textPayload.1
-                  .flatMap { RecordContent(title: "locale", value: $0.description) },
+                  .flatMap { NFCNDEFMessageRecordContent(title: "locale", value: $0.description) },
               ]
                 .compactMap { $0 },
               selectedContent: $selectedContent
@@ -88,95 +88,13 @@ public struct NFCNDEFMessageView: View {
     }
     .sheet(item: $selectedContent) { content in
       NavigationStack {
-        TextDisplayView(content: content)
+        NFCNDEFTextDisplayView(text: content.value ?? "")
           .navigationTitle(content.title)
           .navigationBarTitleDisplayMode(.inline)
       }
       .presentationDetents([.medium, .large])
     }
     .navigationTitle("NFCNDEFMessage")
-  }
-}
-
-private struct RecordContent: Identifiable {
-
-  let title: String
-  let value: String?
-  var isSelectable = false
-
-  var id: String { title }
-
-  static func dataContents(from data: Data) -> [Self] {
-    [
-      .init(title: "bytes", value: byteString(from: data)),
-      .init(title: "utf8", value: String(data: data, encoding: .utf8), isSelectable: true),
-      .init(title: "hex", value: data.hexString, isSelectable: true),
-    ]
-  }
-
-  static func byteString(from data: Data) -> String {
-    ByteCountFormatter.default.string(fromByteCount: Int64(data.count))
-  }
-}
-
-private struct RecordContentView: View {
-
-  let title: String
-  let contents: [RecordContent]
-  @Binding var selectedContent: RecordContent?
-
-  var body: some View {
-    VStack(alignment: .leading) {
-      Text(title)
-        .font(.headline)
-
-      GroupBox {
-        ForEach(contents) { content in
-          if let value = content.value, !value.isEmpty {
-            LabeledContent(content.title) {
-              if content.isSelectable {
-                Button(
-                  action: {
-                    selectedContent = content
-                  },
-                  label: {
-                    Text(value)
-                  }
-                )
-              } else {
-                Text(value)
-              }
-            }
-            .lineLimit(1)
-            .truncationMode(.tail)
-          }
-        }
-      }
-    }
-  }
-}
-
-private struct TextDisplayView: View {
-
-  let content: RecordContent
-  @Environment(\.dismiss) var dismiss
-
-  var body: some View {
-    ScrollView {
-      Text(content.value ?? "")
-        .textSelection(.enabled)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-
-      Spacer()
-    }
-    .toolbar {
-      ToolbarItem(placement: .confirmationAction) {
-        Button("Close") {
-          dismiss()
-        }
-      }
-    }
   }
 }
 
