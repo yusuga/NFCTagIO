@@ -46,7 +46,7 @@ public extension NFCTagReader {
   
   enum ScanningMode {
     case read
-    case write(message: () async throws -> NFCNDEFMessage)
+    case write(NFCNDEFMessage)
   }
   
   enum ConnectionErrorResponsePolicy {
@@ -133,7 +133,6 @@ extension NFCTagReader: NFCNDEFReaderSessionDelegate {
 
             session.invalidate()
           case let .write(message):
-            let message = try await message()
             logger.debug("message: \(message)")
             
             try await tag.writeNDEF(message)
