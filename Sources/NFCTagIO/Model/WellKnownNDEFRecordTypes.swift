@@ -9,7 +9,7 @@ import Foundation
 
 /// Well-known NDEF Record Types
 /// - SeeAlso: https://nfc-forum.org/build/assigned-numbers
-public enum WellKnownNDEFRecordType: String {
+public enum WellKnownNDEFRecordType: String, Hashable {
 
   case Di
   case Gc
