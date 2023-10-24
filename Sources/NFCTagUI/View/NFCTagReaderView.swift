@@ -48,10 +48,10 @@ public struct NFCTagReaderView: View {
       NFCNDEFMessageView(message: $0)
     }
 
-    ScanView() {
+    NFCTagScanView() { scanningMode in
       do {
         try reader.beginScanning(
-          mode: .read,
+          mode: scanningMode,
           alertMessage: .default) {
             guard let error = ($0 as? NFCReaderError) else {
               return .restartPolling
@@ -71,99 +71,6 @@ public struct NFCTagReaderView: View {
       Button("OK") {
         scanError = nil
       }
-    }
-  }
-}
-
-private struct ScanView: View {
-  
-  enum Mode: String, Hashable, CaseIterable {
-    case read
-    case write
-  }
-
-  @State var selectedMode: Mode = .write
-  @State var writeRecordType: WellKnownNDEFRecordType = .T
-  @State var writePayload: String = ""
-  
-  let scanAction: (NFCTagReader.ScanningMode) -> Void
-
-  var body: some View {
-    VStack(spacing: 16) {
-      Picker(
-        "",
-        selection: $selectedMode,
-        content: {
-          ForEach(Mode.allCases, id: \.self) {
-            Text($0.rawValue)
-          }
-        }
-      )
-      .pickerStyle(.segmented)
-      
-      if case .write = selectedMode {
-        VStack(alignment: .leading) {
-          LabeledContent("RecordType") {
-            Picker(
-              "",
-              selection: $writeRecordType,
-              content: {
-                ForEach([WellKnownNDEFRecordType.T, .U], id: \.self) {
-                  Text($0.description)
-                }
-              }
-            )
-          }
-          
-          GroupBox("Payload") {
-            // NFCNDEFPayload.wellKnownTypeURIPayload(url: <#T##URL#>)
-            TextEditor(text: $writePayload)
-              .clipShape(.rect(cornerRadius: 4, style: .continuous))
-          }
-        }
-      }
-
-      Button(
-        action: {
-          switch selectedMode {
-          case .read:
-            scanAction(.read)
-          case .write:
-            let message = switch writeRecordType {
-            case .T:
-              NFCNDEFPayload.wellKnownTypeTextPayload(
-                string: writePayload,
-                locale: Locale(identifier: "en")
-              )
-            case .U:
-              NFCNDEFPayload.wellKnownTypeURIPayload(
-                string: writePayload
-              )
-            default:
-              fatalError("Unsupported type: \(writeRecordType)")
-            }
-            
-            scanAction(.write(message:
-          }
-        }, label: {
-          Label("SCAN", systemImage: "wave.3.forward.circle")
-            .font(.largeTitle)
-            .frame(maxWidth: .infinity)
-        }
-      )
-      .buttonStyle(.borderedProminent)
-      .buttonBorderShape(.capsule)
-      .disabled(!isScannable)
-    }
-    .padding()
-  }
-  
-  private var isScannable: Bool {
-    switch selectedMode {
-    case .read:
-      true
-    case .write:
-      !writePayload.isEmpty
     }
   }
 }

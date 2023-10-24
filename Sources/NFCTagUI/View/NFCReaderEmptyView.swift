@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct NFCReaderEmptyView: View {
 
-  public let isScanning: Bool
+  private let isScanning: Bool
   
   public init(isScanning: Bool) {
     self.isScanning = isScanning

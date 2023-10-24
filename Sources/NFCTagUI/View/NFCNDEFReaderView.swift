@@ -66,7 +66,7 @@ public struct NFCNDEFReaderView: View {
       }
     }
 
-    ScanView(isSingleScan: $isSingleScan) {
+    NFCNDEFScanView(isSingleScan: $isSingleScan) {
       do {
         try reader.beginScanning(
           alertMessage: .default,
@@ -81,49 +81,6 @@ public struct NFCNDEFReaderView: View {
         scanError = nil
       }
     }
-  }
-}
-
-private struct ScanView: View {
-
-  @Binding var isSingleScan: Bool
-  let scanAction: () -> Void
-
-  var body: some View {
-    VStack(spacing: 16) {
-      HStack {
-        VStack(spacing: 2) {
-          Toggle(
-            "",
-            systemImage: isSingleScan ? "repeat.1" : "repeat",
-            isOn: $isSingleScan
-          )
-          .font(.title2)
-          .labelStyle(.iconOnly)
-          .toggleStyle(.button)
-
-          Text(isSingleScan ? "Single Scan" : "Multi Scan")
-            .font(.caption2)
-            .foregroundStyle(.link)
-        }
-        .frame(minWidth: 80)
-
-        Divider()
-
-        Button(
-          action: scanAction,
-          label: {
-            Label("SCAN", systemImage: "wave.3.forward.circle")
-              .font(.largeTitle)
-              .frame(maxWidth: .infinity)
-          }
-        )
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.capsule)
-      }
-    }
-    .frame(maxWidth: .infinity, maxHeight: 60)
-    .padding()
   }
 }
 
